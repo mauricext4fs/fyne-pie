@@ -18,30 +18,12 @@ type FClock struct {
 	MainContainer *fyne.Container
 }
 
-func updateTime(clock *widget.Label) {
-	formatted := time.Now().Format("Time: 03:04:05")
-	clock.SetText(formatted)
-}
-
-func updateFirstArrow(line *canvas.Line) {
-	s := time.Now().Second()
-	p := fyne.NewPos(float32(s), 0)
-	line.Move(p)
-}
-
-func updateSecondArrow(line *canvas.Line) {
-	s := (time.Now().Second() * 255) / 60
-	//p := fyne.NewPos(0, float32(s))
-	size := fyne.NewSize(255, float32(s))
-	line.Resize(size)
-	//line.Move(p)
-}
+var fc FClock
 
 func main() {
-	var fc FClock
 	a := app.New()
 	fc.App = a
-	fc.MainWindow = a.NewWindow("Fyne Clock")
+	fc.MainWindow = fc.App.NewWindow("Fyne Pie")
 
 	clockLabel := widget.NewLabel("")
 	updateTime(clockLabel)
@@ -61,14 +43,19 @@ func main() {
 	// The First arrow of the pie
 	lineBegin := canvas.NewLine(color.RGBA{255, 22, 12, 255})
 	lineBegin.StrokeWidth = 50
-	fc.MainContainer.Add(lineBegin)
+	//fc.MainContainer.Add(lineBegin)
 
 	// The Second arrow of the pie
 	lineEnd := canvas.NewLine(color.RGBA{22, 222, 12, 255})
 	lineEnd.StrokeWidth = 5
-	fc.MainContainer.Add(lineEnd)
+	//fc.MainContainer.Add(lineEnd)
 
-	grid := container.New(layout.NewGridLayout(2), text1, text2, clockLabel, widget.NewLabel(""), c)
+	// Clocki
+	clockC := drawSomeClock()
+	clockC.Layout = fc.MainContainer.Layout
+	fc.MainContainer.Add(clockC)
+
+	grid := container.New(layout.NewGridLayout(2), text1, text2, clockLabel, widget.NewLabel(""), fc.MainContainer)
 
 	fc.MainWindow.SetContent(grid)
 
